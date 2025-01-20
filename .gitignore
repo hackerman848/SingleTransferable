@@ -1,5 +1,2 @@
-/service_account.json
 /settings.txt
-/main.spec
-/build/
-/dist/
+/__pycache__/

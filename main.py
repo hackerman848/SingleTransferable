@@ -1,25 +1,17 @@
-
 import tkinter as tk
 from tkinter import ttk
 from calc_main import start_calc
 from tkinter import messagebox
 from pandas import read_csv
-"""from datetime import datetime
-
-if datetime.now().month == 8 or (datetime.now().month == 9 or datetime.now().day < 10):
-	pass
-else:
-	raise TimeoutError("Demo app out of date.")"""
+from tkinter import filedialog as fd
 
 root = tk.Tk()
 root.title("Single Transferable Vote calculator")
 root.option_add("*tearOff", False)
 
 spreadsheet = tk.StringVar()
-question_tab = tk.StringVar()
 question = tk.StringVar()
 seats = tk.StringVar()
-output_tab = tk.StringVar()
 
 try:
 	with open("settings.txt", "r") as file:
@@ -30,21 +22,13 @@ try:
 	else:
 		spreadsheet.set(df.columns[0])
 	if df.columns[1] == "Unnamed: 1":
-		question_tab.set("")
-	else:
-		question_tab.set(df.columns[1])
-	if df.columns[2] == "Unnamed: 2":
 		question.set("")
 	else:
-		question.set(df.columns[2])
-	if df.columns[3] == "Unnamed: 3":
+		question.set(df.columns[1])
+	if df.columns[2] == "Unnamed: 2":
 		seats.set("")
 	else:
-		seats.set(df.columns[3])
-	if df.columns[4] == "Unnamed: 4":
-		output_tab.set("")
-	else:
-		output_tab.set(df.columns[4])
+		seats.set(df.columns[2])
 except FileNotFoundError:
 	pass
 
@@ -60,28 +44,30 @@ def save_values(*kwargs) -> None:
 
 def quit_program() -> None:
 	_sheet = spreadsheet.get()
-	_input = question_tab.get()
 	_quest = question.get()
 	_seats = seats.get()
-	_output = output_tab.get()
-	save_values(_sheet, _input, _quest, _seats, _output)
+	save_values(_sheet, _quest, _seats)
 	root.destroy()
 
 
 def call_calculator() -> None:
 	_sheet = spreadsheet.get()
-	_input = question_tab.get()
 	_quest = question.get()
 	_seats = seats.get()
-	_output = output_tab.get()
 
 	if not _seats.isnumeric() or int(_seats) < 1:
-		save_values(_sheet, _input, _quest, "", _output)
+		save_values(_sheet, _quest, _seats)
 		error_msg()
 		return
 
-	save_values(_sheet, _input, _quest, _seats, _output)
-	start_calc(_sheet, _input, _quest, int(_seats), _output)
+	save_values(_sheet, _quest, _seats)
+	start_calc(_sheet,  _quest, int(_seats))
+	root.destroy()
+
+def filedialoguename():
+    name = fd.askopenfilename()
+    entry.delete(0,tk.END)
+    entry.insert(0,name)
 
 
 input_frame = ttk.Frame(root, borderwidth = 3, relief = "groove")
@@ -95,11 +81,8 @@ ttk.Label(frame, text = "Spreadsheet Name: ").pack(side = "left", expand = False
 entry = ttk.Entry(frame, textvariable = spreadsheet, width = 30)
 entry.pack(side = "left", expand = True, fill = "x")
 entry.focus()
-
-frame = ttk.Frame(input_frame)
-frame.pack(side = "top", fill = "x", expand = True, pady = 4)
-ttk.Label(frame, text = "Question's Tab Name: ").pack(side = "left", expand = False)
-ttk.Entry(frame, textvariable = question_tab, width = 30).pack(side = "left", expand = True, fill = "x")
+button = ttk.Button(frame, text="Browse", command=filedialoguename)
+button.pack()
 
 frame = ttk.Frame(input_frame)
 frame.pack(side = "top", fill = "x", expand = True, pady = 4)
@@ -112,19 +95,7 @@ ttk.Label(frame, text = "Number of Seats: ").pack(side = "left", expand = False)
 ttk.Entry(frame, textvariable = seats, width = 30).pack(side = "left", expand = True, fill = "x")
 
 
-output_frame = ttk.Frame(root, borderwidth = 3, relief = "solid")
-output_frame.pack(side = "top", fill = "both", expand = True)
-
-ttk.Label(output_frame, text = "Outputs").pack(side = "top", expand = False, fill = "y")
-
-frame = ttk.Frame(output_frame)
-frame.pack(side = "top", fill = "x", expand = True, pady = 4)
-ttk.Label(frame, text = "Output Tab Name: ").pack(side = "left", expand = False)
-ttk.Entry(frame, textvariable = output_tab, width = 30).pack(side = "left", expand = True, fill = "x")
-
 ttk.Button(root, text = "Save & Calculate", command = call_calculator).pack(side = "left", pady = (6, 4), padx = (4, 0))
-# label = ttk.Label(root, text = "Standby")
-# label.pack(side = "left", pady = (6, 4), padx = (0, 4))
 ttk.Button(root, text = "Save & Quit", command = quit_program).pack(side = "right", pady = (6, 4), padx = (0, 4))
 
 root.mainloop()

@@ -4,9 +4,12 @@ import pandas as pd
 from random import choice, shuffle
 
 
-def shorten(item: str) -> (int, None):
-	if len(item) > 0:
-		return int(item[:-2])
+def shorten(item: str): #cleans 1st,2nd etc to just number
+	# print("item = "+str(item))
+	if len(str(item)) > 0 and str(item) != "nan":
+		x= int(str(item)[:-2])
+		# print(x) 
+		return x
 	return None
 
 
@@ -93,5 +96,3 @@ def surplus_calc(ballots: pd.DataFrame, vote_count: pd.Series, person: str, quot
 	adjusted_ballots["Weight"] = adjusted_ballots["Weight"] * personal_weight
 	return adjusted_ballots
 
-
-pass

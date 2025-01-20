@@ -1,6 +1,6 @@
-from utils.tools import pd
+import pandas as pd
 from numpy import nan
-import utils.tools as t
+import tools as t
 from math import floor
 
 
@@ -222,4 +222,3 @@ class TabulationRound:
 			return t.deepcopy(self.get_starting_vote_count())
 
 
-pass
